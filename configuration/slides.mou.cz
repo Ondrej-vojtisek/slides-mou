@@ -1,0 +1,95 @@
+#!/bin/sh
+### BEGIN INIT INFO
+# Provides:          slides.mou.cz
+# Required-Start:
+# Required-Stop:
+# Should-Start:
+# Default-Start:     2 3 4 5
+# Default-Stop:      0 1 6
+# Short-Description: Start the environment of slides.mou.cz.
+# Description:       Pripojeni sitoveho uloziste, kde jsou ulozeny obrazky k zobrazeni.
+#                    Nastaveni napojeni cgi skriptu na tomcat.
+### END INIT INFO
+
+# Skript po spusteni pro nastaveni prostredi pro beh slides.mou.cz
+
+# Port pro volani knihovnu pro praci s obrazky
+CGI_PORT=9000
+# Skript pro praci s obrazky
+CGI_SCRIPT_PATH=/usr/lib/cgi-bin/iipsrv.fcgi
+# Logovaci soubor pro praci s obrazky
+IIPSRV_LOG_PATH=/tmp/iipsrv.log
+# Uroven logovani
+IIPSRV_LOG_VERBOSITY=5
+# Soubor kam se ulozi ID noveho procesu
+SPAWN_PID_PATH=/var/run/fcgi.pid
+
+echo "Slides.mou.cz init script" > /home/vojtisek/result.txt
+
+# Carry out specific functions when asked to by the system
+case "$1" in
+  start)
+    echo "Starting slides.mou.cz environment"
+
+        # presmeruj vse z portu 80 na 8080 (tomcat)
+        iptables -t nat -I PREROUTING -p tcp --dport 80 -j REDIRECT --to-ports 8080
+        iptables -t nat -I PREROUTING -p tcp --dport 443 -j REDIRECT --to-ports 8443
+
+        # logovani
+        # iipimage server bude logovat sem
+        export LOGFILE=$IIPSRV_LOG_PATH
+        # bude logovat vse
+        export VERBOSITY=$IIPSRV_LOG_VERBOSITY
+
+        # webova aplikace bezi v tomcatu, ale nastroj pro vlastni vykreslovani obrazku je fcgi skript
+        # skript je takto volan na zaklade IP a portu, neni potreba aby bezel ve web serveru
+        # IP musi odpovidat aktualni IP adrese serveru
+        # Do $SPAWN_PID_PATH je ulozeno ID procesu tak abychom ho dokazali vypnout v pripade potreby.
+        spawn-fcgi -f $CGI_SCRIPT_PATH -a 127.0.0.1 -p $CGI_PORT -P $SPAWN_PID_PATH
+
+        # mount jpeg 2000 file storage
+        # //rcm-file2.rcm.int.mou.cz/slides /mnt/slides cifs username=slider,password= 0 0
+
+        # odstranit lighttpd ze startup scriptu
+        # update-rc.d -f lighttpd remove
+
+        # vypnout lighttpd
+        /etc/init.d/lighttpd stop
+
+
+    ;;
+  stop)
+    echo "Stopping slides.mou.cz environment"
+        # rusi nastavene presmerovani
+        iptables -t nat -D PREROUTING -p tcp --dport 80 -j REDIRECT --to-ports 8080
+        iptables -t nat -D PREROUTING -p tcp --dport 443 -j REDIRECT --to-ports 8443
+
+        # ukoncit spawn-fcgi
+        # Pouzij ID jake se vytvorilo ve spawn-fcgi
+        kill -9 `cat $SPAWN_PID_PATH`
+
+    ;;
+ restart)
+    echo "This service is not supported only start|stop"
+    ;;
+
+ status)
+    echo "This service is not supported only start|stop"
+    ;;
+
+ force-reload)
+    echo "This service is not supported only start|stop"
+    ;;
+
+  *)
+    echo "Usage: /etc/init.d/slides.int.mou.cz {start|stop}"
+    exit 1
+    ;;
+
+esac
+
+exit 0
+
+
+
+
