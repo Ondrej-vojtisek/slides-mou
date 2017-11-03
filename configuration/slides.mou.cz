@@ -38,7 +38,7 @@ case "$1" in
         # logovani
         # iipimage server bude logovat sem
         export LOGFILE=$IIPSRV_LOG_PATH
-        # bude logovat vse
+        # nastaveni logovani
         export VERBOSITY=$IIPSRV_LOG_VERBOSITY
 
         # webova aplikace bezi v tomcatu, ale nastroj pro vlastni vykreslovani obrazku je fcgi skript
@@ -46,16 +46,6 @@ case "$1" in
         # IP musi odpovidat aktualni IP adrese serveru
         # Do $SPAWN_PID_PATH je ulozeno ID procesu tak abychom ho dokazali vypnout v pripade potreby.
         spawn-fcgi -f $CGI_SCRIPT_PATH -a 127.0.0.1 -p $CGI_PORT -P $SPAWN_PID_PATH
-
-        # mount jpeg 2000 file storage
-        # //rcm-file2.rcm.int.mou.cz/slides /mnt/slides cifs username=slider,password= 0 0
-
-        # odstranit lighttpd ze startup scriptu
-        # update-rc.d -f lighttpd remove
-
-        # vypnout lighttpd
-        /etc/init.d/lighttpd stop
-
 
     ;;
   stop)
@@ -70,15 +60,15 @@ case "$1" in
 
     ;;
  restart)
-    echo "This service is not supported only start|stop"
+    echo "This service is not supported. Only start|stop"
     ;;
 
  status)
-    echo "This service is not supported only start|stop"
+    echo "This service is not supported. Only start|stop"
     ;;
 
  force-reload)
-    echo "This service is not supported only start|stop"
+    echo "This service is not supported. Only start|stop"
     ;;
 
   *)
