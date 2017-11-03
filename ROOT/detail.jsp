@@ -1,7 +1,8 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+<%@ page language="java" pageEncoding="UTF-8" session="false"%>
+<!DOCTYPE html>
+<html>
 <head>
-    <link rel="stylesheet" type="text/css" media="all" href="css/iip.compressed.css"/>
+    <link rel="stylesheet" type="text/css" media="all" href="css/iip.css"/>
     <link rel="shortcut icon" href="images/iip-favicon.png"/>
     <title>IIPImage JPEG2000</title>
 
@@ -46,21 +47,17 @@
         //   showNavButtons: true
         //});
         
-        var iipmooviewer = new IIPMooViewer("viewer", {
-          image: images,
-          server: server,
-          credit: credit,
-          zoom: 1,
-          render: 'random',
-          showNavButtons: true  
-        });
+        new IIPMooViewer( "viewer", { image: images } );
 
     </script>
 
 </head>
 
 <body>
+    <div id="viewer" style="width:100%;height:100%"></div>
+    <!--
     <div style="width:99%;height:99%;margin-left:auto;margin-right:auto" id="targetframe"></div>
+    -->
 </body>
 
 </html>
