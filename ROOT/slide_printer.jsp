@@ -29,7 +29,7 @@
     // priklad spravneho pojmenovani Rok(4x 0-9)_BioptickeCislo(4-6x 0-9)-OznaceniSkla(2x 0-9)-Typ(T/N/M).jp2
     final String FILE_NAME_SAMPLE = "2009_2667-04-T.jp2";
     // jsp stranka s detailem
-    final String DETAIL = "detail.jsp?path=";
+    final String DETAIL = "detail.html?path=";
 
 
     // nacti parametr z URL ve formatu Rok_BioptickeCislo
